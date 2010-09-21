@@ -903,6 +903,11 @@ enum MangosStrings
 
     // Use for custom patches             11000-11999
 
+    LANG_COMMAND_CONF_ADDITEM_NO_REQ_ITEM   = 12030,    //"Vous ne possédez aucun Gage de recherche de Halaa !"
+    LANG_COMMAND_CONF_ADDITEM_SQL_ERROR     = 12031,    //"Erreur lors de l'exécution de la commande, contactez un Administrateur."
+    LANG_COMMAND_CONF_ADDITEM_ITEM_DENIED   = 12032,    //"L'objet d'ID %u n'est pas autorisé à être ajouté !"
+    LANG_COMMAND_CONF_ADDITEM_ITEM_ADDED    = 12033,    // "L'objet d'ID %u a bien été ajouté en échange d'un Gage de recherche de Halaa !"
+
     // NOT RESERVED IDS                   12000-1999999999
     // `db_script_string` table index     2000000000-2000009999 (MIN_DB_SCRIPT_STRING_ID-MAX_DB_SCRIPT_STRING_ID)
     // For other tables maybe             2000010000-2147483647 (max index)

@@ -655,6 +655,13 @@ ChatCommand * ChatHandler::getCommandTable()
         { NULL,             0,                  false, NULL,                                           "", NULL }
     };
 
+    static ChatCommand confrerieCommandTable[] =
+    {
+        { "additem",        SEC_PLAYER,       false, &ChatHandler::HandleConfrerieAddItemCommand,    "", NULL },
+        { NULL,             0,                false, NULL,                                           "", NULL }
+    };
+
+
     static ChatCommand commandTable[] =
     {
         { "account",        SEC_PLAYER,         true,  NULL,                                           "", accountCommandTable  },
