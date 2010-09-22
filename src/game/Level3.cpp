@@ -6790,8 +6790,7 @@ bool ChatHandler::HandleConfrerieAddItemCommand(char* args)
     if (pl->HasItemCount(requiredItem, 1, false))
     {
         // On vérifie que l'objet est autorisé.
-        // QueryResult *result = ConfrerieDatabase.PQuery("SELECT COUNT(itemId) FROM denied_items WHERE itemId = %u", itemId);
-		QueryResult *result = CharacterDatabase.PQuery("SELECT COUNT(itemId) FROM denied_items WHERE itemId = %u", itemId);
+        QueryResult *result = ConfrerieDatabase.PQuery("SELECT COUNT(itemId) FROM denied_items WHERE itemId = %u", itemId);
         if (result)
         {
             Field *fields=result->Fetch();

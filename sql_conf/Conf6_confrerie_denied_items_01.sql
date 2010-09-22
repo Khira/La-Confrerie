@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS `denied_items`;
+CREATE TABLE `denied_items`
+(
+  `itemId` INT(11) UNSIGNED NOT NULL,
+  `comment` VARCHAR(255) NOT NULL,
+  PRIMARY KEY  (`itemId`)
+) ENGINE=MYISAM DEFAULT CHARSET=utf8;
