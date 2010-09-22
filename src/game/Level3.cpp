@@ -907,6 +907,38 @@ bool ChatHandler::HandleReloadMailLevelRewardCommand(char* /*args*/)
     return true;
 }
 
+bool ChatHandler::HandleReloadItemTemplateCommand(char* /*arg*/)
+{
+    sLog.outString( "Re-Loading Item Template ... ");
+    sObjectMgr.LoadItemPrototypes();
+    SendSysMessage("DB table `item_template` reloaded.");
+    return true;
+}
+
+bool ChatHandler::HandleReloadGameObjectTemplateCommand(char* /*arg*/)
+{
+    sLog.outString( "Re-Loading GameObject Template ... ");
+    sObjectMgr.LoadGameobjectInfo();
+    SendSysMessage("DB table `gameobject_template` reloaded.");
+    return true;
+}
+
+bool ChatHandler::HandleReloadCreatureAddonsCommand(char* /*arg*/)
+{
+    sLog.outString( "Re-Loading Creature Addon Template ... ");
+    sObjectMgr.LoadCreatureAddons();
+    SendSysMessage("DB table `creature_template_addon` and `creature_addon` reloaded.");
+    return true;
+}
+
+bool ChatHandler::HandleReloadCreatureTemplateCommand(char* /*arg*/)
+{
+    sLog.outString( "Re-Loading Creature Template ... ");
+    sObjectMgr.LoadCreatureTemplates();
+    SendSysMessage("DB table `creature_template` reloaded.");
+    return true;
+}
+
 bool ChatHandler::HandleLoadScriptsCommand(char* args)
 {
     if (!LoadScriptingModule(args))

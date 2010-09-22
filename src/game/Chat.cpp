@@ -528,6 +528,11 @@ ChatCommand * ChatHandler::getCommandTable()
         { "spell_target_position",       SEC_ADMINISTRATOR, true,  &ChatHandler::HandleReloadSpellTargetPositionCommand,     "", NULL },
         { "spell_threats",               SEC_ADMINISTRATOR, true,  &ChatHandler::HandleReloadSpellThreatsCommand,            "", NULL },
 
+        { "item_template",               SEC_ADMINISTRATOR, true,  &ChatHandler::HandleReloadItemTemplateCommand,            "", NULL },
+        { "gameobject_template",         SEC_ADMINISTRATOR, true,  &ChatHandler::HandleReloadGameObjectTemplateCommand,      "", NULL },
+        { "creature_addon",              SEC_ADMINISTRATOR, true,  &ChatHandler::HandleReloadCreatureAddonsCommand,          "", NULL },
+        { "creature_template",           SEC_ADMINISTRATOR, true,  &ChatHandler::HandleReloadCreatureTemplateCommand,        "", NULL },
+
         { NULL,                          0,                 false, NULL,                                                     "", NULL }
     };
 
