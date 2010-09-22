@@ -26,6 +26,7 @@ ConfVersion=2010062001
 #    LoginDatabaseInfo
 #    WorldDatabaseInfo
 #    CharacterDatabaseInfo
+#    ConfrerieDatabaseInfo
 #        Database connection settings for the world server.
 #        Default:
 #                ---MYSQL---
@@ -57,6 +58,7 @@ LogsDir = ""
 LoginDatabaseInfo     = "127.0.0.1;3306;mangos;mangos;realmd"
 WorldDatabaseInfo     = "127.0.0.1;3306;mangos;mangos;mangos"
 CharacterDatabaseInfo = "127.0.0.1;3306;mangos;mangos;characters"
+ConfrerieDatabaseInfo = "127.0.0.1;3306;mangos;mangos;confrerie"
 MaxPingTime = 30
 WorldServerPort = 8085
 BindIP = "0.0.0.0"

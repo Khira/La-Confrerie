@@ -514,6 +514,24 @@ bool Master::_StartDB()
         return false;
     }
 
+    // Add Confrerie database - Begin
+    dbstring = sConfig.GetStringDefault("ConfrerieDatabaseInfo", "");
+    if(dbstring.empty())
+    {
+        sLog.outError("Confrerie Database not specified in configuration file");
+        return false;
+    }
+    sLog.outString("Confrerie Database: %s", dbstring.c_str());
+
+
+    ///- Initialise the Confrerie database
+    if(!ConfrerieDatabase.Initialize(dbstring.c_str()))
+    {
+        sLog.outError("Cannot connect to Confrerie database %s",dbstring.c_str());
+        return false;
+    }
+    // Add Confrerie database - End
+
     ///- Get the realm Id from the configuration file
     realmID = sConfig.GetIntDefault("RealmID", 0);
     if(!realmID)
