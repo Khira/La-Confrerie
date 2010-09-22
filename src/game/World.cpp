@@ -749,7 +749,7 @@ void World::LoadConfigSettings(bool reload)
             sLog.outError("ClientCacheVersion can't be negative %d, ignored.", clientCacheId);
     }
 
-    setConfig(CONFIG_UINT32_INSTANT_LOGOUT, "InstantLogout", SEC_MODERATOR);
+    setConfig(CONFIG_UINT32_INSTANT_LOGOUT, "InstantLogout", SEC_ANIM);
 
     setConfigMin(CONFIG_UINT32_GUILD_EVENT_LOG_COUNT, "Guild.EventLogRecordsCount", GUILD_EVENTLOG_MAX_RECORDS, GUILD_EVENTLOG_MAX_RECORDS);
     setConfigMin(CONFIG_UINT32_GUILD_BANK_EVENT_LOG_COUNT, "Guild.BankEventLogRecordsCount", GUILD_BANK_MAX_LOGS, GUILD_BANK_MAX_LOGS);
