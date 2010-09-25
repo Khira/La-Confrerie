@@ -1914,6 +1914,9 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         void AddPetAura(PetAura const* petSpell);
         void RemovePetAura(PetAura const* petSpell);
 
+        inline void SetSpoofSamePlayerFaction(bool b) { m_spoofSamePlayerFaction = b; }
+        inline bool IsSpoofSamePlayerFaction(void) {return m_spoofSamePlayerFaction; }
+
         // Movement info
         MovementInfo m_movementInfo;
 
@@ -1966,7 +1969,9 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         uint32 m_regenTimer;
         uint32 m_lastManaUseTimer;
 
-    private:
+        bool m_spoofSamePlayerFaction : 1;
+
+    public:
         void CleanupDeletedAuras();
 
         // player or player's pet

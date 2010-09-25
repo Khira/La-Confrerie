@@ -208,6 +208,8 @@ void WorldSession::HandleGroupAcceptOpcode( WorldPacket & recv_data )
     // everything is fine, do it, PLAYER'S GROUP IS SET IN ADDMEMBER!!!
     if(!group->AddMember(GetPlayer()->GetObjectGuid(), GetPlayer()->GetName()))
         return;
+
+    group->BroadcastGroupUpdate();
 }
 
 void WorldSession::HandleGroupDeclineOpcode( WorldPacket & /*recv_data*/ )
