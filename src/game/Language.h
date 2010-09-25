@@ -902,6 +902,8 @@ enum MangosStrings
     //                                    10000-10999
 
     // Use for custom patches             11000-11999
+    LANG_COMMAND_GOB_MODIF_NO_SELECT_OBJ        = 11500,
+
     LANG_COMMAND_CONF_MORPH_RACE_NOT_POSSIBLE   = 12000,
     LANG_COMMAND_CONF_MORPH_RACE_HUMAN          = 12001,
     LANG_COMMAND_CONF_MORPH_RACE_HELP           = 12002,

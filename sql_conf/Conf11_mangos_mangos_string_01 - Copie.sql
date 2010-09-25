@@ -1,0 +1,2 @@
+DELETE FROM `mangos_string` WHERE `entry` = 11500;
+INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES (11500, 'Aucun gameobject sélectionné, merci d\'en sélectionner un à l\'aide de la commande .gobject target ou de spécifier un GUID avant la commande.');
