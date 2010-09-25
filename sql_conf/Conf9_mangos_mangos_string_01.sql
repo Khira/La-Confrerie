@@ -1,0 +1,14 @@
+DELETE FROM `mangos_string` WHERE `entry` BETWEEN 12000 AND 12012;
+INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES (12000, 'Vous ne pouvez vous transformer.');
+INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES (12001, 'Vous reprenez votre forme humanoïde.');
+INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES (12002, 'Contactez un MJ pour accèder à une race spéciale. Attention, allez voir sur le forum les pré-requis demandés.');
+INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES (12003, 'La race de %s a été modifiée.');
+INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES (12004, 'Aucun résultat n\'a été trouvé.');
+INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES (12005, 'La race d\'ID n°%u a bien été supprimée !');
+INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES (12006, 'La race <%s> a bien été créée (ID <%u>)');
+INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES (12007, 'Le champ <%s> de la race <%u> a bien été modifié.');
+INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES (12008, '[%u] <%s> DisplayId : H: %u | F: %u');
+INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES (12009, '>> Vitesse*%f | Taille*%f | Sorts : %u, %u, %u | Auras : %u, %u, %u');
+INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES (12010, 'Race du joueur %s : [%u] <%s>.');
+INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES (12011, 'Race du joueur %s : Aucune.');
+INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES (12012, 'La race de %s a été supprimée.');

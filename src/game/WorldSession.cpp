@@ -291,6 +291,25 @@ void WorldSession::LogoutPlayer(bool Save)
     {
         sLog.outChar("Account: %d (IP: %s) Logout Character:[%s] (guid: %u)", GetAccountId(), GetRemoteAddress().c_str(), _player->GetName() ,_player->GetGUIDLow());
 
+        QueryResult *resultRace = ConfrerieDatabase.PQuery("SELECT spell1, spell2, spell3 FROM player_race WHERE entry=(SELECT morph FROM player_race_relation WHERE guid='%u')", _player->GetGUID());
+        if (resultRace)
+        {
+            Field* fieldsRace = resultRace->Fetch();
+            for (uint32 i = 0; i < 3; ++i)
+            {
+                if (_player->HasSpell(fieldsRace[i].GetUInt32()) && fieldsRace[i].GetUInt32()!=0)
+                    _player->removeSpell(fieldsRace[i].GetUInt32(),false,false);
+            }
+
+            _player->DeMorph();
+            _player->UpdateSpeed(MOVE_RUN, true, 1.0f);
+            _player->UpdateSpeed(MOVE_FLIGHT, true, 1.0f);
+            _player->SetFloatValue(OBJECT_FIELD_SCALE_X, 1.0f);
+            _player->RemoveAllAuras();
+
+            delete resultRace;
+        }
+
         if (uint64 lguid = GetPlayer()->GetLootGUID())
             DoLootRelease(lguid);
 

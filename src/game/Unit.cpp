@@ -8308,6 +8308,28 @@ void Unit::setDeathState(DeathState s)
 
     if (s == JUST_DIED)
     {
+        if (GetTypeId()==TYPEID_PLAYER)
+        {
+            QueryResult *resultRace = ConfrerieDatabase.PQuery("SELECT spell1, spell2, spell3 FROM player_race WHERE entry=(SELECT morph FROM player_race_relation WHERE guid='%u')", ((Player*)this)->GetGUID());
+            if (resultRace)
+            {
+                Field* fieldsRace = resultRace->Fetch();
+                for (uint32 i = 0; i < 3; ++i)
+                {
+                    if (((Player*)this)->HasSpell(fieldsRace[i].GetUInt32()) && fieldsRace[i].GetUInt32() != 0)
+                        ((Player*)this)->removeSpell(fieldsRace[i].GetUInt32(),false,false);
+                }
+
+                ((Player*)this)->DeMorph();
+                ((Player*)this)->UpdateSpeed(MOVE_RUN, true, 1.0f);
+                ((Player*)this)->UpdateSpeed(MOVE_FLIGHT, true, 1.0f);
+                ((Player*)this)->SetFloatValue(OBJECT_FIELD_SCALE_X, 1.0f);
+                ((Player*)this)->RemoveAllAuras();
+
+                delete resultRace;
+            }
+        }
+
         RemoveAllAurasOnDeath();
         RemoveGuardians();
         UnsummonAllTotems();

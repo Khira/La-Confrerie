@@ -660,12 +660,25 @@ ChatCommand * ChatHandler::getCommandTable()
         { NULL,             0,                  false, NULL,                                           "", NULL }
     };
 
+    static ChatCommand confrerieMorphCommandTable[] =
+    {
+        { "on",             SEC_PLAYER,        false, &ChatHandler::HandleConfrerieMorphOnCommand,     "", NULL },
+        { "off",            SEC_PLAYER,        false, &ChatHandler::HandleConfrerieMorphOffCommand,    "", NULL },
+        { "set",            SEC_GAMEMASTER,    false, &ChatHandler::HandleConfrerieMorphSetCommand,    "", NULL },
+        { "get",            SEC_GAMEMASTER,    true,  &ChatHandler::HandleConfrerieMorphGetCommand,    "", NULL },
+        { "create",         SEC_ADMINISTRATOR, false, &ChatHandler::HandleConfrerieMorphCreateCommand, "", NULL },
+        { "edit",           SEC_ADMINISTRATOR, false, &ChatHandler::HandleConfrerieMorphEditCommand,   "", NULL },
+        { "delete",         SEC_ADMINISTRATOR, false, &ChatHandler::HandleConfrerieMorphDeleteCommand, "", NULL },
+        { "list",           SEC_GAMEMASTER,    false, &ChatHandler::HandleConfrerieMorphListCommand,   "", NULL },
+        { NULL,             0,                 false, NULL,                                            "", NULL }
+    };
+
     static ChatCommand confrerieCommandTable[] =
     {
         { "additem",        SEC_PLAYER,       false, &ChatHandler::HandleConfrerieAddItemCommand,    "", NULL },
+        { "morph",          SEC_PLAYER,       false, NULL,                                           "", confrerieMorphCommandTable},
         { NULL,             0,                false, NULL,                                           "", NULL }
     };
-
 
     static ChatCommand commandTable[] =
     {

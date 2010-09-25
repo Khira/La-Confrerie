@@ -503,7 +503,15 @@ class ChatHandler
         bool HandleWpShowCommand(char* args);
         bool HandleWpExportCommand(char* args);
         bool HandleWpImportCommand(char* args);
-		bool HandleConfrerieAddItemCommand(char* args);
+        bool HandleConfrerieAddItemCommand(char* args);
+        bool HandleConfrerieMorphOnCommand(char* args);
+        bool HandleConfrerieMorphOffCommand(char* args);
+        bool HandleConfrerieMorphSetCommand(char* args);
+        bool HandleConfrerieMorphGetCommand(char* args);
+        bool HandleConfrerieMorphCreateCommand(char* args);
+        bool HandleConfrerieMorphEditCommand(char* args);
+        bool HandleConfrerieMorphDeleteCommand(char* args);
+        bool HandleConfrerieMorphListCommand(char* args);
 
         bool HandleHelpCommand(char* args);
         bool HandleCommandsCommand(char* args);

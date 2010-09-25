@@ -902,6 +902,19 @@ enum MangosStrings
     //                                    10000-10999
 
     // Use for custom patches             11000-11999
+    LANG_COMMAND_CONF_MORPH_RACE_NOT_POSSIBLE   = 12000,
+    LANG_COMMAND_CONF_MORPH_RACE_HUMAN          = 12001,
+    LANG_COMMAND_CONF_MORPH_RACE_HELP           = 12002,
+    LANG_COMMAND_CONF_MORPH_RACE_SET            = 12003,
+    LANG_COMMAND_CONF_MORPH_RACE_NO_RESULT      = 12004,
+    LANG_COMMAND_CONF_MORPH_RACE_DEL            = 12005,
+    LANG_COMMAND_CONF_MORPH_RACE_ADD            = 12006,
+    LANG_COMMAND_CONF_MORPH_RACE_EDIT           = 12007,
+    LANG_COMMAND_CONF_MORPH_LIST_DESC_P1        = 12008,
+    LANG_COMMAND_CONF_MORPH_LIST_DESC_P2        = 12009,
+    LANG_COMMAND_CONF_MORPH_RACE_GET            = 12010,
+    LANG_COMMAND_CONF_MORPH_RACE_NO_MORPH       = 12011,
+    LANG_COMMAND_CONF_MORPH_RACE_PL_DEL         = 12012,
 
     LANG_COMMAND_CONF_ADDITEM_NO_REQ_ITEM   = 12030,    //"Vous ne possédez aucun Gage de recherche de Halaa !"
     LANG_COMMAND_CONF_ADDITEM_SQL_ERROR     = 12031,    //"Erreur lors de l'exécution de la commande, contactez un Administrateur."
