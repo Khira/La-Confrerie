@@ -513,6 +513,8 @@ class ChatHandler
         bool HandleConfrerieMorphDeleteCommand(char* args);
         bool HandleConfrerieMorphListCommand(char* args);
 
+        bool HandleSellerAddItemCommand(char* args);
+
         bool HandleHelpCommand(char* args);
         bool HandleCommandsCommand(char* args);
         bool HandleStartCommand(char* args);

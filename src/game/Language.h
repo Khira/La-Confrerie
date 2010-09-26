@@ -918,6 +918,15 @@ enum MangosStrings
     LANG_COMMAND_CONF_MORPH_RACE_NO_MORPH       = 12011,
     LANG_COMMAND_CONF_MORPH_RACE_PL_DEL         = 12012,
 
+    LANG_COMMAND_SELLER_ADD_NOGUILD             = 12020, // "Vous ne pouvez vendre aux membres de votre guilde."
+    LANG_COMMAND_SELLER_ADD_NOSELLER            = 12021, // "Vous ne pouvez pas vendre d'objet."
+    LANG_COMMAND_SELLER_ADD_NOJETON             = 12022, // "Vous ne possedez pas les objets necessaire pour vendre cet objet."
+    LANG_COMMAND_SELLER_ADD_DENIED              = 12023, // "Vous n'etes pas autorise a vendre l'objet n %s ."
+    LANG_COMMAND_SELLER_ADD_PRICE               = 12024, // "Le prix de l'objet n %s est de %s pieces de cuivre."
+    LANG_COMMAND_SELLER_ADD_NOMONEY             = 12025, // "Vous ne possedez pas assez d'argent, il vous faut %s pieces de cuivre."
+    LANG_COMMAND_SELLER_ADD_NOQUALITY           = 12026, // "Vous ne pouvez vendre un objet d'une si haute qualitee !"
+    LANG_COMMAND_SELLER_ADD_NOLEVEL             = 12027, // "Vous ne pouvez vendre un objet d'un si haut niveau."
+
     LANG_COMMAND_CONF_ADDITEM_NO_REQ_ITEM   = 12030,    //"Vous ne possédez aucun Gage de recherche de Halaa !"
     LANG_COMMAND_CONF_ADDITEM_SQL_ERROR     = 12031,    //"Erreur lors de l'exécution de la commande, contactez un Administrateur."
     LANG_COMMAND_CONF_ADDITEM_ITEM_DENIED   = 12032,    //"L'objet d'ID %u n'est pas autorisé à être ajouté !"
