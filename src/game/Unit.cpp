@@ -1082,7 +1082,7 @@ void Unit::CastStop(uint32 except_spellid)
             InterruptSpell(CurrentSpellTypes(i),false);
 }
 
-void Unit::CastSpell(Unit* Victim, uint32 spellId, bool triggered, Item *castItem, Aura* triggeredByAura, ObjectGuid originalCaster)
+void Unit::CastSpell(Unit* Victim, uint32 spellId, bool triggered, Item *castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy)
 {
     SpellEntry const *spellInfo = sSpellStore.LookupEntry(spellId);
 
@@ -1095,10 +1095,10 @@ void Unit::CastSpell(Unit* Victim, uint32 spellId, bool triggered, Item *castIte
         return;
     }
 
-    CastSpell(Victim, spellInfo, triggered, castItem, triggeredByAura, originalCaster);
+    CastSpell(Victim, spellInfo, triggered, castItem, triggeredByAura, originalCaster, triggeredBy);
 }
 
-void Unit::CastSpell(Unit* Victim, SpellEntry const *spellInfo, bool triggered, Item *castItem, Aura* triggeredByAura, ObjectGuid originalCaster)
+void Unit::CastSpell(Unit* Victim, SpellEntry const *spellInfo, bool triggered, Item *castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy)
 {
     if(!spellInfo)
     {
@@ -1112,10 +1112,15 @@ void Unit::CastSpell(Unit* Victim, SpellEntry const *spellInfo, bool triggered, 
     if (castItem)
         DEBUG_FILTER_LOG(LOG_FILTER_SPELL_CAST, "WORLD: cast Item spellId - %i", spellInfo->Id);
 
-    if(originalCaster.IsEmpty() && triggeredByAura)
-        originalCaster = triggeredByAura->GetCasterGUID();
+    if (triggeredByAura)
+    {
+        if(originalCaster.IsEmpty())
+            originalCaster = triggeredByAura->GetCasterGUID();
 
-    Spell *spell = new Spell(this, spellInfo, triggered, originalCaster);
+        triggeredBy = triggeredByAura->GetSpellProto();
+    }
+
+    Spell *spell = new Spell(this, spellInfo, triggered, originalCaster, triggeredBy);
 
     SpellCastTargets targets;
     targets.setUnitTarget( Victim );
@@ -1123,7 +1128,7 @@ void Unit::CastSpell(Unit* Victim, SpellEntry const *spellInfo, bool triggered, 
     spell->prepare(&targets, triggeredByAura);
 }
 
-void Unit::CastCustomSpell(Unit* Victim,uint32 spellId, int32 const* bp0, int32 const* bp1, int32 const* bp2, bool triggered, Item *castItem, Aura* triggeredByAura, ObjectGuid originalCaster)
+void Unit::CastCustomSpell(Unit* Victim,uint32 spellId, int32 const* bp0, int32 const* bp1, int32 const* bp2, bool triggered, Item *castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy)
 {
     SpellEntry const *spellInfo = sSpellStore.LookupEntry(spellId);
 
@@ -1136,10 +1141,10 @@ void Unit::CastCustomSpell(Unit* Victim,uint32 spellId, int32 const* bp0, int32 
         return;
     }
 
-    CastCustomSpell(Victim, spellInfo, bp0, bp1, bp2, triggered, castItem, triggeredByAura, originalCaster);
+    CastCustomSpell(Victim, spellInfo, bp0, bp1, bp2, triggered, castItem, triggeredByAura, originalCaster, triggeredBy);
 }
 
-void Unit::CastCustomSpell(Unit* Victim, SpellEntry const *spellInfo, int32 const* bp0, int32 const* bp1, int32 const* bp2, bool triggered, Item *castItem, Aura* triggeredByAura, ObjectGuid originalCaster)
+void Unit::CastCustomSpell(Unit* Victim, SpellEntry const *spellInfo, int32 const* bp0, int32 const* bp1, int32 const* bp2, bool triggered, Item *castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy)
 {
     if(!spellInfo)
     {
@@ -1153,10 +1158,15 @@ void Unit::CastCustomSpell(Unit* Victim, SpellEntry const *spellInfo, int32 cons
     if (castItem)
         DEBUG_FILTER_LOG(LOG_FILTER_SPELL_CAST, "WORLD: cast Item spellId - %i", spellInfo->Id);
 
-    if(originalCaster.IsEmpty() && triggeredByAura)
-        originalCaster = triggeredByAura->GetCasterGUID();
+    if (triggeredByAura)
+    {
+        if(originalCaster.IsEmpty())
+            originalCaster = triggeredByAura->GetCasterGUID();
 
-    Spell *spell = new Spell(this, spellInfo, triggered, originalCaster);
+        triggeredBy = triggeredByAura->GetSpellProto();
+    }
+
+    Spell *spell = new Spell(this, spellInfo, triggered, originalCaster, triggeredBy);
 
     if(bp0)
         spell->m_currentBasePoints[EFFECT_INDEX_0] = *bp0;
@@ -1174,7 +1184,7 @@ void Unit::CastCustomSpell(Unit* Victim, SpellEntry const *spellInfo, int32 cons
 }
 
 // used for scripting
-void Unit::CastSpell(float x, float y, float z, uint32 spellId, bool triggered, Item *castItem, Aura* triggeredByAura, ObjectGuid originalCaster)
+void Unit::CastSpell(float x, float y, float z, uint32 spellId, bool triggered, Item *castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy)
 {
     SpellEntry const *spellInfo = sSpellStore.LookupEntry(spellId);
 
@@ -1187,11 +1197,11 @@ void Unit::CastSpell(float x, float y, float z, uint32 spellId, bool triggered, 
         return;
     }
 
-    CastSpell(x, y, z, spellInfo, triggered, castItem, triggeredByAura, originalCaster);
+    CastSpell(x, y, z, spellInfo, triggered, castItem, triggeredByAura, originalCaster, triggeredBy);
 }
 
 // used for scripting
-void Unit::CastSpell(float x, float y, float z, SpellEntry const *spellInfo, bool triggered, Item *castItem, Aura* triggeredByAura, ObjectGuid originalCaster)
+void Unit::CastSpell(float x, float y, float z, SpellEntry const *spellInfo, bool triggered, Item *castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy)
 {
     if(!spellInfo)
     {
@@ -1205,10 +1215,15 @@ void Unit::CastSpell(float x, float y, float z, SpellEntry const *spellInfo, boo
     if (castItem)
         DEBUG_FILTER_LOG(LOG_FILTER_SPELL_CAST, "WORLD: cast Item spellId - %i", spellInfo->Id);
 
-    if(originalCaster.IsEmpty() && triggeredByAura)
-        originalCaster = triggeredByAura->GetCasterGUID();
+    if (triggeredByAura)
+    {
+        if(originalCaster.IsEmpty())
+            originalCaster = triggeredByAura->GetCasterGUID();
 
-    Spell *spell = new Spell(this, spellInfo, triggered, originalCaster);
+        triggeredBy = triggeredByAura->GetSpellProto();
+    }
+
+    Spell *spell = new Spell(this, spellInfo, triggered, originalCaster, triggeredBy);
 
     SpellCastTargets targets;
     targets.setDestination(x, y, z);
@@ -3671,7 +3686,7 @@ void Unit::SetInFront(Unit const* target)
     SetOrientation(GetAngle(target));
 }
 
-void Unit::SetFacingTo(float ori)
+void Unit::SetFacingTo(float ori, bool bToSelf /*= false*/)
 {
     // update orientation at server
     SetOrientation(ori);
@@ -3679,7 +3694,7 @@ void Unit::SetFacingTo(float ori)
     // and client
     WorldPacket data;
     BuildHeartBeatMsg(&data);
-    SendMessageToSet(&data, false);
+    SendMessageToSet(&data, bToSelf);
 }
 
 // Consider move this to Creature:: since only creature appear to be able to use this
@@ -8396,23 +8411,29 @@ void Unit::setDeathState(DeathState s)
 bool Unit::CanHaveThreatList() const
 {
     // only creatures can have threat list
-    if( GetTypeId() != TYPEID_UNIT )
+    if (GetTypeId() != TYPEID_UNIT)
         return false;
 
     // only alive units can have threat list
-    if( !isAlive() )
+    if (!isAlive())
         return false;
 
+    Creature const* creature = ((Creature const*)this);
+
     // totems can not have threat list
-    if( ((Creature*)this)->isTotem() )
+    if (creature->isTotem())
         return false;
 
     // vehicles can not have threat list
-    if( ((Creature*)this)->isVehicle() )
+    if (creature->isVehicle())
         return false;
 
     // pets can not have a threat list, unless they are controlled by a creature
-    if( ((Creature*)this)->isPet() && IS_PLAYER_GUID(((Pet*)this)->GetOwnerGUID()) )
+    if (creature->isPet() && IS_PLAYER_GUID(((Pet const*)creature)->GetOwnerGUID()))
+        return false;
+
+    // charmed units can not have a threat list if charmed by player
+    if (creature->isCharmed() && IS_PLAYER_GUID(creature->GetCharmerGUID()))
         return false;
 
     return true;
@@ -9794,14 +9815,14 @@ void Unit::SendPetTalk (uint32 pettalk)
     ((Player*)owner)->GetSession()->SendPacket(&data);
 }
 
-void Unit::SendPetAIReaction(uint64 guid)
+void Unit::SendPetAIReaction()
 {
     Unit* owner = GetOwner();
     if(!owner || owner->GetTypeId() != TYPEID_PLAYER)
         return;
 
     WorldPacket data(SMSG_AI_REACTION, 8 + 4);
-    data << uint64(guid);
+    data << GetObjectGuid();
     data << uint32(AI_REACTION_HOSTILE);
     ((Player*)owner)->GetSession()->SendPacket(&data);
 }
