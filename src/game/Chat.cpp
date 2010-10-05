@@ -688,6 +688,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { "additem",        SEC_PLAYER,         false, &ChatHandler::HandleConfrerieAddItemCommand,    "", NULL },
         { "morph",          SEC_PLAYER,         false, NULL,                                           "", confrerieMorphCommandTable },
         { "sellitem",       SEC_PLAYER,         false, NULL,                                           "", confrerieSellItemTable },
+        { "itemnumber",     SEC_ANIM,           false, &ChatHandler::HandleConfrerieItemNumberCommand, "", NULL },
         { NULL,             0,                  false, NULL,                                           "", NULL }
     };
 

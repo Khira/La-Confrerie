@@ -519,6 +519,8 @@ class ChatHandler
         bool HandleSellerAddItemReqCommand(char* args);
         bool HandleSellerAddItemFlagsCommand(char* args);
 
+        bool HandleConfrerieItemNumberCommand(char* args);
+
         bool HandleHelpCommand(char* args);
         bool HandleCommandsCommand(char* args);
         bool HandleStartCommand(char* args);

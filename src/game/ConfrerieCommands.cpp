@@ -817,3 +817,47 @@ bool ChatHandler::HandleSellerAddItemFlagsCommand(char* args)
     PSendSysMessage("Mise à jour du newVendorFlag du joueur [%u] %s par : %u.", plTarget->GetGUID(), plTarget->GetName(), newVendorFlag);
     return true;
 }
+
+bool ChatHandler::HandleConfrerieItemNumberCommand(char* args)
+{
+    if (!*args)
+        return false;
+
+    char* cId = ExtractKeyFromLink(&args, "Hitem");
+    if(!cId)
+        return false;
+
+    uint32 itemId = 0;
+    if (!ExtractUInt32(&cId, itemId))
+    {
+        std::string itemName = cId;
+        WorldDatabase.escape_string(itemName);
+        QueryResult *result = WorldDatabase.PQuery("SELECT entry FROM item_template WHERE name = '%s'", itemName.c_str());
+        if (!result)
+        {
+            PSendSysMessage(LANG_COMMAND_COULDNOTFIND, cId);
+            SetSentErrorMessage(true);
+            return false;
+        }
+        itemId = result->Fetch()->GetUInt16();
+        delete result;
+    }
+
+    ItemPrototype const *pProto = sObjectMgr.GetItemPrototype(itemId);
+    if(!pProto)
+    {
+        PSendSysMessage(LANG_COMMAND_ITEMIDINVALID, itemId);
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    Player* target = getSelectedPlayer();
+    if(!target)
+        target = m_session->GetPlayer();
+
+    uint32 itemCount = target->GetItemCount(itemId);
+
+    PSendSysMessage("%s possède %u exemplaire(s) de l'objet <%u> [%s]", target->GetName(), itemCount, itemId, pProto->Name1);
+    return true;
+}
+
