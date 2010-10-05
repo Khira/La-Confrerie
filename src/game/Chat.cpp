@@ -673,12 +673,22 @@ ChatCommand * ChatHandler::getCommandTable()
         { NULL,             0,                 false, NULL,                                            "", NULL }
     };
 
+    static ChatCommand confrerieSellItemTable[] =
+    {
+        { "itemlvl",        SEC_ADMINISTRATOR,  false, &ChatHandler::HandleSellerAddItemLvlCommand,     "", NULL },
+        { "itemquality",    SEC_ADMINISTRATOR,  false, &ChatHandler::HandleSellerAddItemQuaCommand,     "", NULL },
+        { "itemreq",        SEC_ADMINISTRATOR,  false, &ChatHandler::HandleSellerAddItemReqCommand,     "", NULL },
+        { "flags",          SEC_ADMINISTRATOR,  false, &ChatHandler::HandleSellerAddItemFlagsCommand,   "", NULL },
+        { "",               SEC_PLAYER,         false, &ChatHandler::HandleSellerAddItemCommand,        "", NULL },
+        { NULL,             0,                  false, NULL,                                            "", NULL }
+    };
+
     static ChatCommand confrerieCommandTable[] =
     {
-        { "additem",        SEC_PLAYER,       false, &ChatHandler::HandleConfrerieAddItemCommand,    "", NULL },
-        { "morph",          SEC_PLAYER,       false, NULL,                                           "", confrerieMorphCommandTable},
-        { "sellitem",           SEC_PLAYER,       false, &ChatHandler::HandleSellerAddItemCommand,       "", NULL },
-        { NULL,             0,                false, NULL,                                           "", NULL }
+        { "additem",        SEC_PLAYER,         false, &ChatHandler::HandleConfrerieAddItemCommand,    "", NULL },
+        { "morph",          SEC_PLAYER,         false, NULL,                                           "", confrerieMorphCommandTable },
+        { "sellitem",       SEC_PLAYER,         false, NULL,                                           "", confrerieSellItemTable },
+        { NULL,             0,                  false, NULL,                                           "", NULL }
     };
 
     static ChatCommand commandTable[] =

@@ -25,6 +25,15 @@
 #include "SpellAuras.h"
 #include "SpellMgr.h"
 
+enum PlayerSellerConfFlags
+{
+    PLAYER_SELLER_CONF_FLAG_WEAPONS     = 0x00000001,
+    PLAYER_SELLER_CONF_FLAG_ARMOR       = 0x00000002,
+    PLAYER_SELLER_CONF_FLAG_JEWELERY    = 0x00000004,
+    PLAYER_SELLER_CONF_FLAG_OTHER       = 0x00000008,
+    PLAYER_SELLER_CONF_FLAG_GUILD_SELL  = 0x00000010,
+};
+
 bool ChatHandler::HandleConfrerieMorphOnCommand(char* /*args*/)
 {
     if(!m_session->GetPlayer()->isAlive())
@@ -505,21 +514,17 @@ bool ChatHandler::HandleSellerAddItemCommand(char* args)
         plTarget = pl;
         
     // Selection des permissions du vendeur
-    QueryResult *resultSeller = ConfrerieDatabase.PQuery("SELECT vendeur_armure, vendeur_arme, vendeur_bijoux, vendeur_autre, level_item_max, qualitee_item_max, item_requierd, guild_vendor FROM player_seller WHERE pguid='%u'", pl->GetGUID());
+    QueryResult *resultSeller = ConfrerieDatabase.PQuery("SELECT vendorTypeFlag, itemLevelMax, itemQualityMax, itemRequierd FROM player_seller WHERE pguid='%u'", pl->GetGUID());
     if (!resultSeller) 
     {
         SendSysMessage(LANG_COMMAND_SELLER_ADD_NOSELLER);
         return true;
     }
     Field* fieldsSeller = resultSeller->Fetch();
-    uint32 vendeur_armure = fieldsSeller[0].GetUInt32();
-    uint32 vendeur_arme = fieldsSeller[1].GetUInt32();
-    uint32 vendeur_bijoux = fieldsSeller[2].GetUInt32();
-    uint32 vendeur_autre = fieldsSeller[3].GetUInt32();
-    uint32 level_item_max = fieldsSeller[4].GetUInt32();
-    uint32 qualitee_item_max = fieldsSeller[5].GetUInt32();
-    uint32 idItemRequierd = fieldsSeller[6].GetUInt32();
-    uint32 guildAllowToSell = fieldsSeller[7].GetUInt32();
+    uint32 vendorTypeFlag       = fieldsSeller[0].GetUInt32();
+    uint32 level_item_max       = fieldsSeller[1].GetUInt32();
+    uint32 qualitee_item_max    = fieldsSeller[2].GetUInt32();
+    uint32 idItemRequierd       = fieldsSeller[3].GetUInt32();
     uint32 money = pl->GetMoney();
     delete resultSeller;
 
@@ -562,7 +567,7 @@ bool ChatHandler::HandleSellerAddItemCommand(char* args)
     case 10:
     case 16:
     case 20:
-        if (vendeur_armure == 1)
+        if (vendorTypeFlag & PLAYER_SELLER_CONF_FLAG_ARMOR)
             itemPrix = 10000 * pProto->Quality * pProto->ItemLevel / 25;
         else 
         {
@@ -575,7 +580,7 @@ bool ChatHandler::HandleSellerAddItemCommand(char* args)
     case 14:
     case 17:
     case 21:
-        if (vendeur_armure == 1)
+        if (vendorTypeFlag & PLAYER_SELLER_CONF_FLAG_WEAPONS)
             itemPrix = 10000 * pProto->Quality * pProto->ItemLevel / 25;
         else 
         {
@@ -591,7 +596,7 @@ bool ChatHandler::HandleSellerAddItemCommand(char* args)
     case 22:
     case 23:
     case 28:
-        if (vendeur_bijoux == 1)
+        if (vendorTypeFlag & PLAYER_SELLER_CONF_FLAG_JEWELERY)
             itemPrix = 10000 * pProto->Quality * pProto->ItemLevel / 50;
         else {
             PSendSysMessage(LANG_COMMAND_SELLER_ADD_DENIED, itemId);
@@ -599,7 +604,7 @@ bool ChatHandler::HandleSellerAddItemCommand(char* args)
             return false; }
         break;
     default:
-        if (((pProto->Class == 15 && pProto->SubClass == 5) || (pProto->Class == 15 && pProto->SubClass == 2)) && vendeur_autre == 1) 
+        if (((pProto->Class == 15 && pProto->SubClass == 5) || (pProto->Class == 15 && pProto->SubClass == 2)) && (vendorTypeFlag & PLAYER_SELLER_CONF_FLAG_OTHER)) 
             itemPrix = 10000 * pProto->Quality * pProto->ItemLevel; 
         else 
         {
@@ -633,7 +638,7 @@ bool ChatHandler::HandleSellerAddItemCommand(char* args)
 
     if(pl->GetGuildId() != 0)
     {
-        if(pl->GetGuildId() == plTarget->GetGuildId() && guildAllowToSell == 0) // Non autorise a vendre a sa guilde.
+        if(pl->GetGuildId() == plTarget->GetGuildId() && !(vendorTypeFlag & PLAYER_SELLER_CONF_FLAG_GUILD_SELL)) // Non autorise a vendre a sa guilde.
         {
             PSendSysMessage(LANG_COMMAND_SELLER_ADD_NOGUILD);
             return true;
@@ -677,3 +682,138 @@ bool ChatHandler::HandleSellerAddItemCommand(char* args)
     return true;
 }
 
+bool ChatHandler::HandleSellerAddItemLvlCommand(char* args)
+{
+    Player* plTarget = getSelectedPlayer();
+    if (!plTarget)
+        return false;
+
+    int newItemLvl;
+    if (!ExtractInt32(&args, newItemLvl))
+        return false;
+
+    QueryResult *result = ConfrerieDatabase.PQuery("SELECT `vendorTypeFlag`, `itemQualityMax`, `itemRequierd` "
+        "FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
+    if (result)
+    {
+        Field *fields=result->Fetch();
+        uint32 vendorTypeFlag   = fields[0].GetUInt32();
+        uint32 itemQualityMax   = fields[1].GetUInt32();
+        uint32 itemRequierd     = fields[2].GetUInt32();
+        delete result;
+        ConfrerieDatabase.PExecute("DELETE FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
+        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`, `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax`, `itemRequierd`) "
+            "VALUES (%u, %u, %u, %u, %u)", plTarget->GetGUID(), vendorTypeFlag, newItemLvl, itemQualityMax, itemRequierd);
+    }
+    else
+    {
+        ConfrerieDatabase.PExecute("DELETE FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
+        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`, `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax`, `itemRequierd`) "
+            "VALUES (%u, %u, %u, %u, %u)", plTarget->GetGUID(), 0, newItemLvl, 0, 0);
+    }
+
+    PSendSysMessage("Mise à jour du ItemLevelMax du joueur [%u] %s par : %u.", plTarget->GetGUID(), plTarget->GetName(), newItemLvl);
+    return true;
+}
+
+bool ChatHandler::HandleSellerAddItemQuaCommand(char* args)
+{
+    Player* plTarget = getSelectedPlayer();
+    if (!plTarget)
+        return false;
+
+    int newItemQua;
+    if (!ExtractInt32(&args, newItemQua))
+        return false;
+
+    QueryResult *result = ConfrerieDatabase.PQuery("SELECT `vendorTypeFlag`, `itemLevelMax`, `itemRequierd` "
+        "FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
+    if (result)
+    {
+        Field *fields=result->Fetch();
+        uint32 vendorTypeFlag   = fields[0].GetUInt32();
+        uint32 itemLevelMax     = fields[1].GetUInt32();
+        uint32 itemRequierd     = fields[2].GetUInt32();
+        delete result;
+        ConfrerieDatabase.PExecute("DELETE FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
+        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`, `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax`, `itemRequierd`) "
+            "VALUES (%u, %u, %u, %u, %u)", plTarget->GetGUID(), vendorTypeFlag, itemLevelMax, newItemQua, itemRequierd);
+    }
+    else
+    {
+        ConfrerieDatabase.PExecute("DELETE FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
+        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`, `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax`, `itemRequierd`) "
+            "VALUES (%u, %u, %u, %u, %u)", plTarget->GetGUID(), 0, 0, newItemQua, 0);
+    }
+
+    PSendSysMessage("Mise à jour du ItemQualityMax du joueur [%u] %s par : %u.", plTarget->GetGUID(), plTarget->GetName(), newItemQua);
+    return true;
+}
+
+bool ChatHandler::HandleSellerAddItemReqCommand(char* args)
+{
+    Player* plTarget = getSelectedPlayer();
+    if (!plTarget)
+        return false;
+
+    int newItemReq;
+    if (!ExtractInt32(&args, newItemReq))
+        return false;
+
+    QueryResult *result = ConfrerieDatabase.PQuery("SELECT `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax` "
+        "FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
+    if (result)
+    {
+        Field *fields=result->Fetch();
+        uint32 vendorTypeFlag   = fields[0].GetUInt32();
+        uint32 itemLevelMax     = fields[1].GetUInt32();
+        uint32 itemQualityMax   = fields[2].GetUInt32();
+        delete result;
+        ConfrerieDatabase.PExecute("DELETE FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
+        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`, `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax`, `itemRequierd`) "
+            "VALUES (%u, %u, %u, %u, %u)", plTarget->GetGUID(), vendorTypeFlag, itemLevelMax, itemQualityMax, newItemReq);
+    }
+    else
+    {
+        ConfrerieDatabase.PExecute("DELETE FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
+        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`, `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax`, `itemRequierd`) "
+            "VALUES (%u, %u, %u, %u, %u)", plTarget->GetGUID(), 0, 0, 0, newItemReq);
+    }
+
+    PSendSysMessage("Mise à jour du ItemRequierd du joueur [%u] %s par : %u.", plTarget->GetGUID(), plTarget->GetName(), newItemReq);
+    return true;
+}
+
+bool ChatHandler::HandleSellerAddItemFlagsCommand(char* args)
+{
+    Player* plTarget = getSelectedPlayer();
+    if (!plTarget)
+        return false;
+
+    int newVendorFlag;
+    if (!ExtractInt32(&args, newVendorFlag))
+        return false;
+
+    QueryResult *result = ConfrerieDatabase.PQuery("SELECT `itemLevelMax`, `itemQualityMax`, `itemRequierd` "
+        "FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
+    if (result)
+    {
+        Field *fields=result->Fetch();
+        uint32 itemLevelMax     = fields[0].GetUInt32();
+        uint32 itemQualityMax   = fields[1].GetUInt32();
+        uint32 itemRequierd     = fields[2].GetUInt32();
+        delete result;
+        ConfrerieDatabase.PExecute("DELETE FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
+        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`, `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax`, `itemRequierd`) "
+            "VALUES (%u, %u, %u, %u, %u)", plTarget->GetGUID(), newVendorFlag, itemLevelMax, itemQualityMax, itemRequierd);
+    }
+    else
+    {
+        ConfrerieDatabase.PExecute("DELETE FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
+        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`, `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax`, `itemRequierd`) "
+            "VALUES (%u, %u, %u, %u, %u)", plTarget->GetGUID(), newVendorFlag, 0, 0, 0);
+    }
+
+    PSendSysMessage("Mise à jour du newVendorFlag du joueur [%u] %s par : %u.", plTarget->GetGUID(), plTarget->GetName(), newVendorFlag);
+    return true;
+}
