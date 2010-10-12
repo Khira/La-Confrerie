@@ -95,7 +95,7 @@ void GameObject::RemoveFromWorld()
     Object::RemoveFromWorld();
 }
 
-bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, uint32 phaseMask, float x, float y, float z, float ang, float rotation0, float rotation1, float rotation2, float rotation3, uint32 animprogress, GOState go_state)
+bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, uint32 phaseMask, float x, float y, float z, float ang, float rotation0, float rotation1, float rotation2, float rotation3, uint8 animprogress, GOState go_state)
 {
     MANGOS_ASSERT(map);
     Relocate(x,y,z,ang);
@@ -134,6 +134,9 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, uint32 phaseMa
 
     SetUInt32Value(GAMEOBJECT_FACTION, goinfo->faction);
     SetUInt32Value(GAMEOBJECT_FLAGS, goinfo->flags);
+
+    if (goinfo->type == GAMEOBJECT_TYPE_TRANSPORT)
+        SetFlag(GAMEOBJECT_FLAGS, (GO_FLAG_TRANSPORT | GO_FLAG_NODESPAWN));
 
     SetEntry(goinfo->id);
 
@@ -189,7 +192,7 @@ void GameObject::Update(uint32 /*p_time*/)
                         if(caster && caster->GetTypeId()==TYPEID_PLAYER)
                         {
                             SetGoState(GO_STATE_ACTIVE);
-                            SetUInt32Value(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
+                            // SetUInt32Value(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
 
                             UpdateData udata;
                             WorldPacket packet;
@@ -570,7 +573,7 @@ bool GameObject::LoadFromDB(uint32 guid, Map *map)
     float rotation2 = data->rotation2;
     float rotation3 = data->rotation3;
 
-    uint32 animprogress = data->animprogress;
+    uint8 animprogress = data->animprogress;
     GOState go_state = data->go_state;
 
     m_DBTableGuid = guid;
@@ -631,10 +634,10 @@ GameObjectInfo const *GameObject::GetGOInfo() const
 /*********************************************************/
 bool GameObject::hasQuest(uint32 quest_id) const
 {
-    QuestRelations const& qr = sObjectMgr.mGOQuestRelations;
-    for(QuestRelations::const_iterator itr = qr.lower_bound(GetEntry()); itr != qr.upper_bound(GetEntry()); ++itr)
+    QuestRelationsMapBounds bounds = sObjectMgr.GetGOQuestRelationsMapBounds(GetEntry());
+    for(QuestRelationsMap::const_iterator itr = bounds.first; itr != bounds.second; ++itr)
     {
-        if(itr->second==quest_id)
+        if (itr->second == quest_id)
             return true;
     }
     return false;
@@ -642,10 +645,10 @@ bool GameObject::hasQuest(uint32 quest_id) const
 
 bool GameObject::hasInvolvedQuest(uint32 quest_id) const
 {
-    QuestRelations const& qr = sObjectMgr.mGOQuestInvolvedRelations;
-    for(QuestRelations::const_iterator itr = qr.lower_bound(GetEntry()); itr != qr.upper_bound(GetEntry()); ++itr)
+    QuestRelationsMapBounds bounds = sObjectMgr.GetGOQuestInvolvedRelationsMapBounds(GetEntry());
+    for(QuestRelationsMap::const_iterator itr = bounds.first; itr != bounds.second; ++itr)
     {
-        if(itr->second==quest_id)
+        if (itr->second == quest_id)
             return true;
     }
     return false;
@@ -732,9 +735,9 @@ bool GameObject::ActivateToQuest(Player *pTarget)const
             // these conditions are not sufficient/will fail.
             // Never expect flags|4 for these GO's? (NF-note: It doesn't appear it's expected)
 
-            const QuestRelations &qRel = sObjectMgr.mGOQuestRelations;
+            QuestRelationsMapBounds bounds = sObjectMgr.GetGOQuestRelationsMapBounds(GetEntry());
 
-            for(QuestRelations::const_iterator itr = qRel.lower_bound(GetEntry()); itr != qRel.upper_bound(GetEntry()); ++itr)
+            for(QuestRelationsMap::const_iterator itr = bounds.first; itr != bounds.second; ++itr)
             {
                 const Quest *qInfo = sObjectMgr.GetQuestTemplate(itr->second);
 
@@ -742,9 +745,9 @@ bool GameObject::ActivateToQuest(Player *pTarget)const
                     return true;
             }
 
-            const QuestRelations &qInRel = sObjectMgr.mGOQuestInvolvedRelations;
+            bounds = sObjectMgr.GetGOQuestInvolvedRelationsMapBounds(GetEntry());
 
-            for(QuestRelations::const_iterator itr = qInRel.lower_bound(GetEntry()); itr != qInRel.upper_bound(GetEntry()); ++itr)
+            for(QuestRelationsMap::const_iterator itr = bounds.first; itr != bounds.second; ++itr)
             {
                 if ((pTarget->GetQuestStatus(itr->second) == QUEST_STATUS_INCOMPLETE || pTarget->GetQuestStatus(itr->second) == QUEST_STATUS_COMPLETE)
                     && !pTarget->GetQuestRewardStatus(itr->second))
@@ -803,7 +806,7 @@ void GameObject::SummonLinkedTrapIfAny()
 
     GameObject* linkedGO = new GameObject;
     if (!linkedGO->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), linkedEntry, GetMap(),
-         GetPhaseMask(), GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation(), 0.0f, 0.0f, 0.0f, 0.0f, 100, GO_STATE_READY))
+         GetPhaseMask(), GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation(), 0.0f, 0.0f, 0.0f, 0.0f, GO_ANIMPROGRESS_DEFAULT, GO_STATE_READY))
     {
         delete linkedGO;
         linkedGO = NULL;
