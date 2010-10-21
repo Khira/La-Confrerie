@@ -677,7 +677,7 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer * data, UpdateMask *
                         
                         if(GetTypeId() == TYPEID_UNIT)
                         {
-                            forcefriendly = (((Creature*)this)->isTotem() || ((Creature*)this)->isPet())
+                            forcefriendly = (((Creature*)this)->IsTotem() || ((Creature*)this)->IsPet())
                             && ((Creature*)this)->GetOwner()->GetTypeId() == TYPEID_PLAYER
                             && ((Creature*)this)->GetOwner()->IsFriendlyTo(target) // pet owner must be friendly to target
                             && ((Creature*)this)->GetOwner() != target // no need to send hackfix to pet owner
