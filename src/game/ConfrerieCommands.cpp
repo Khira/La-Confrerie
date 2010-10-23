@@ -692,27 +692,13 @@ bool ChatHandler::HandleSellerAddItemLvlCommand(char* args)
     if (!ExtractInt32(&args, newItemLvl))
         return false;
 
-    QueryResult *result = ConfrerieDatabase.PQuery("SELECT `vendorTypeFlag`, `itemQualityMax`, `itemRequierd` "
-        "FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
-    if (result)
-    {
-        Field *fields=result->Fetch();
-        uint32 vendorTypeFlag   = fields[0].GetUInt32();
-        uint32 itemQualityMax   = fields[1].GetUInt32();
-        uint32 itemRequierd     = fields[2].GetUInt32();
-        delete result;
-        ConfrerieDatabase.PExecute("DELETE FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
-        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`, `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax`, `itemRequierd`) "
-            "VALUES (%u, %u, %u, %u, %u)", plTarget->GetGUID(), vendorTypeFlag, newItemLvl, itemQualityMax, itemRequierd);
-    }
-    else
-    {
-        ConfrerieDatabase.PExecute("DELETE FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
-        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`, `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax`, `itemRequierd`) "
-            "VALUES (%u, %u, %u, %u, %u)", plTarget->GetGUID(), 0, newItemLvl, 0, 0);
-    }
+    QueryResult *result = ConfrerieDatabase.PQuery("SELECT `pguid` FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
+    if (!result)
+        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`) VALUES (%u)", plTarget->GetGUID());
 
-    PSendSysMessage("Mise à jour du ItemLevelMax du joueur [%u] %s par : %u.", plTarget->GetGUID(), plTarget->GetName(), newItemLvl);
+    ConfrerieDatabase.PExecute("UPDATE `player_seller` SET `itemLevelMax` = %u WHERE `pguid` = %u", newItemLvl, plTarget->GetGUID());
+
+    PSendSysMessage(LANG_COMMAND_CONF_SELL_LEVEL, plTarget->GetName(), newItemLvl);
     return true;
 }
 
@@ -726,27 +712,13 @@ bool ChatHandler::HandleSellerAddItemQuaCommand(char* args)
     if (!ExtractInt32(&args, newItemQua))
         return false;
 
-    QueryResult *result = ConfrerieDatabase.PQuery("SELECT `vendorTypeFlag`, `itemLevelMax`, `itemRequierd` "
-        "FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
-    if (result)
-    {
-        Field *fields=result->Fetch();
-        uint32 vendorTypeFlag   = fields[0].GetUInt32();
-        uint32 itemLevelMax     = fields[1].GetUInt32();
-        uint32 itemRequierd     = fields[2].GetUInt32();
-        delete result;
-        ConfrerieDatabase.PExecute("DELETE FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
-        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`, `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax`, `itemRequierd`) "
-            "VALUES (%u, %u, %u, %u, %u)", plTarget->GetGUID(), vendorTypeFlag, itemLevelMax, newItemQua, itemRequierd);
-    }
-    else
-    {
-        ConfrerieDatabase.PExecute("DELETE FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
-        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`, `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax`, `itemRequierd`) "
-            "VALUES (%u, %u, %u, %u, %u)", plTarget->GetGUID(), 0, 0, newItemQua, 0);
-    }
+    QueryResult *result = ConfrerieDatabase.PQuery("SELECT `pguid` FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
+    if (!result)
+        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`) VALUES (%u)", plTarget->GetGUID());
 
-    PSendSysMessage("Mise à jour du ItemQualityMax du joueur [%u] %s par : %u.", plTarget->GetGUID(), plTarget->GetName(), newItemQua);
+    ConfrerieDatabase.PExecute("UPDATE `player_seller` SET `itemQualityMax` = %u WHERE `pguid` = %u", newItemQua, plTarget->GetGUID());
+
+    PSendSysMessage(LANG_COMMAND_CONF_SELL_QUALITY, plTarget->GetName(), newItemQua);
     return true;
 }
 
@@ -760,27 +732,13 @@ bool ChatHandler::HandleSellerAddItemReqCommand(char* args)
     if (!ExtractInt32(&args, newItemReq))
         return false;
 
-    QueryResult *result = ConfrerieDatabase.PQuery("SELECT `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax` "
-        "FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
-    if (result)
-    {
-        Field *fields=result->Fetch();
-        uint32 vendorTypeFlag   = fields[0].GetUInt32();
-        uint32 itemLevelMax     = fields[1].GetUInt32();
-        uint32 itemQualityMax   = fields[2].GetUInt32();
-        delete result;
-        ConfrerieDatabase.PExecute("DELETE FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
-        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`, `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax`, `itemRequierd`) "
-            "VALUES (%u, %u, %u, %u, %u)", plTarget->GetGUID(), vendorTypeFlag, itemLevelMax, itemQualityMax, newItemReq);
-    }
-    else
-    {
-        ConfrerieDatabase.PExecute("DELETE FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
-        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`, `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax`, `itemRequierd`) "
-            "VALUES (%u, %u, %u, %u, %u)", plTarget->GetGUID(), 0, 0, 0, newItemReq);
-    }
+    QueryResult *result = ConfrerieDatabase.PQuery("SELECT `pguid` FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
+    if (!result)
+        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`) VALUES (%u)", plTarget->GetGUID());
 
-    PSendSysMessage("Mise à jour du ItemRequierd du joueur [%u] %s par : %u.", plTarget->GetGUID(), plTarget->GetName(), newItemReq);
+    ConfrerieDatabase.PExecute("UPDATE `player_seller` SET `itemRequierd` = %u WHERE `pguid` = %u", newItemReq, plTarget->GetGUID());
+
+    PSendSysMessage(LANG_COMMAND_CONF_SELL_REQUIRED, plTarget->GetName(), newItemReq);
     return true;
 }
 
@@ -794,27 +752,13 @@ bool ChatHandler::HandleSellerAddItemFlagsCommand(char* args)
     if (!ExtractInt32(&args, newVendorFlag))
         return false;
 
-    QueryResult *result = ConfrerieDatabase.PQuery("SELECT `itemLevelMax`, `itemQualityMax`, `itemRequierd` "
-        "FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
+    QueryResult *result = ConfrerieDatabase.PQuery("SELECT `pguid` FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
     if (result)
-    {
-        Field *fields=result->Fetch();
-        uint32 itemLevelMax     = fields[0].GetUInt32();
-        uint32 itemQualityMax   = fields[1].GetUInt32();
-        uint32 itemRequierd     = fields[2].GetUInt32();
-        delete result;
-        ConfrerieDatabase.PExecute("DELETE FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
-        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`, `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax`, `itemRequierd`) "
-            "VALUES (%u, %u, %u, %u, %u)", plTarget->GetGUID(), newVendorFlag, itemLevelMax, itemQualityMax, itemRequierd);
-    }
-    else
-    {
-        ConfrerieDatabase.PExecute("DELETE FROM `player_seller` WHERE `pguid` = %u", plTarget->GetGUID());
-        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`, `vendorTypeFlag`, `itemLevelMax`, `itemQualityMax`, `itemRequierd`) "
-            "VALUES (%u, %u, %u, %u, %u)", plTarget->GetGUID(), newVendorFlag, 0, 0, 0);
-    }
+        ConfrerieDatabase.PExecute("INSERT INTO `player_seller` (`pguid`) VALUES (%u)", plTarget->GetGUID());
 
-    PSendSysMessage("Mise à jour du newVendorFlag du joueur [%u] %s par : %u.", plTarget->GetGUID(), plTarget->GetName(), newVendorFlag);
+    ConfrerieDatabase.PExecute("UPDATE `player_seller` SET `vendorTypeFlag` = %u WHERE `pguid` = %u", newVendorFlag, plTarget->GetGUID());
+
+    PSendSysMessage(LANG_COMMAND_CONF_SELL_FLAGS, plTarget->GetName(), newVendorFlag);
     return true;
 }
 
@@ -857,7 +801,8 @@ bool ChatHandler::HandleConfrerieItemNumberCommand(char* args)
 
     uint32 itemCount = target->GetItemCount(itemId);
 
-    PSendSysMessage("%s possède %u exemplaire(s) de l'objet <%u> [%s]", target->GetName(), itemCount, itemId, pProto->Name1);
+    PSendSysMessage(LANG_COMMAND_CONF_ITEMNUMBER, target->GetName(), itemCount, itemId, pProto->Name1);
+
     return true;
 }
 

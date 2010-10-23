@@ -932,6 +932,12 @@ enum MangosStrings
     LANG_COMMAND_CONF_ADDITEM_ITEM_DENIED   = 12032,    //"L'objet d'ID %u n'est pas autorisé à être ajouté !"
     LANG_COMMAND_CONF_ADDITEM_ITEM_ADDED    = 12033,    // "L'objet d'ID %u a bien été ajouté en échange d'un Gage de recherche de Halaa !"
 
+    LANG_COMMAND_CONF_ITEMNUMBER            = 12040,    // %s possède %u exemplaire(s) de l'objet <%u> [%s]
+    LANG_COMMAND_CONF_SELL_LEVEL            = 12041,    // Mise à jour du ItemLevelMax du joueur [%u] %s par : %u.
+    LANG_COMMAND_CONF_SELL_QUALITY          = 12042,    // Mise à jour du ItemQualityMax du joueur [%u] %s par : %u.
+    LANG_COMMAND_CONF_SELL_REQUIRED         = 12043,    // Mise à jour du ItemRequierd du joueur [%u] %s par : %u.
+    LANG_COMMAND_CONF_SELL_FLAGS            = 12044,    // Mise à jour du newVendorFlag du joueur [%u] %s par : %u.
+
     // NOT RESERVED IDS                   12000-1999999999
     // `db_script_string` table index     2000000000-2000009999 (MIN_DB_SCRIPT_STRING_ID-MAX_DB_SCRIPT_STRING_ID)
     // For other tables maybe             2000010000-2147483647 (max index)
