@@ -410,7 +410,7 @@ bool ChatHandler::HandleConfrerieAddItemCommand(char* args)
         delete result;
     }
 
-    int32 count = 1;
+    int32 count = 2;
     uint32 requiredItem = 26044;
 
     Player* pl = m_session->GetPlayer();
@@ -424,7 +424,7 @@ bool ChatHandler::HandleConfrerieAddItemCommand(char* args)
     }
 
     // Gage de recherche de Halaa possédé ?
-    if (pl->HasItemCount(requiredItem, 1, false))
+    if (pl->HasItemCount(requiredItem, count, false))
     {
         // On vérifie que l'objet est autorisé.
         QueryResult *result = ConfrerieDatabase.PQuery("SELECT COUNT(itemId) FROM denied_items WHERE itemId = %u", itemId);
@@ -449,7 +449,7 @@ bool ChatHandler::HandleConfrerieAddItemCommand(char* args)
                 }
 
                 // On supprime l'objet requis...
-                pl->DestroyItemCount(requiredItem, 1, true, false);
+                pl->DestroyItemCount(requiredItem, count, true, false);
                 // ...puis on ajoute l'objet demandé.
                 pl->StoreNewItem( dest, itemId, true, Item::GenerateItemRandomPropertyId(itemId));
                 PSendSysMessage(LANG_COMMAND_CONF_ADDITEM_ITEM_ADDED, itemId);
