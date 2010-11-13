@@ -1913,6 +1913,7 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         PetAuraSet m_petAuras;
         void AddPetAura(PetAura const* petSpell);
         void RemovePetAura(PetAura const* petSpell);
+        uint32 GetModelForForm(ShapeshiftForm form);
 
         inline void SetSpoofSamePlayerFaction(bool b) { m_spoofSamePlayerFaction = b; }
         inline bool IsSpoofSamePlayerFaction(void) {return m_spoofSamePlayerFaction; }

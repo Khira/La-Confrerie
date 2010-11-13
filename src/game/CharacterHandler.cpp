@@ -1051,17 +1051,8 @@ void WorldSession::HandleAlterAppearanceOpcode( WorldPacket & recv_data )
 {
     DEBUG_LOG("CMSG_ALTER_APPEARANCE");
 
-    uint32 Hair, Color, FacialHair, SkinTone = 0;
-    if(_player->getRace() != RACE_TAUREN) 
-        recv_data >> Hair >> Color >> FacialHair;
-    else
-    {
-        recv_data >> Hair >> Color >> FacialHair >> SkinTone;
-        BarberShopStyleEntry const* bs_skinTone = sBarberShopStyleStore.LookupEntry(SkinTone);
-        if(!bs_skinTone || bs_skinTone->type != 3 || bs_skinTone->race != _player->getRace() || bs_skinTone->gender != _player->getGender())
-            return;
-       SkinTone = bs_skinTone->hair_id;
-    }
+    uint32 Hair, Color, FacialHair;
+    recv_data >> Hair >> Color >> FacialHair;
 
     BarberShopStyleEntry const* bs_hair = sBarberShopStyleStore.LookupEntry(Hair);
 
@@ -1073,7 +1064,7 @@ void WorldSession::HandleAlterAppearanceOpcode( WorldPacket & recv_data )
     if(!bs_facialHair || bs_facialHair->type != 2 || bs_facialHair->race != _player->getRace() || bs_facialHair->gender != _player->getGender())
         return;
 
-    uint32 Cost = _player->GetBarberShopCost(bs_hair->hair_id, Color, bs_facialHair->hair_id, SkinTone);
+    uint32 Cost = _player->GetBarberShopCost(bs_hair->hair_id, Color, bs_facialHair->hair_id);
 
     // 0 - ok
     // 1,3 - not enough money
@@ -1098,8 +1089,6 @@ void WorldSession::HandleAlterAppearanceOpcode( WorldPacket & recv_data )
     _player->SetByteValue(PLAYER_BYTES, 2, uint8(bs_hair->hair_id));
     _player->SetByteValue(PLAYER_BYTES, 3, uint8(Color));
     _player->SetByteValue(PLAYER_BYTES_2, 0, uint8(bs_facialHair->hair_id));
-    if(_player->getRace() == RACE_TAUREN) 
-        _player->SetByteValue(PLAYER_BYTES, 0, uint8(SkinTone));
 
     _player->GetAchievementMgr().UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_VISIT_BARBER_SHOP, 1);
 
