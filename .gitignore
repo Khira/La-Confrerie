@@ -67,6 +67,7 @@ patches-*
 # VS binaries output
 #
 bin/*
+contrib/*
 
 #
 # VS temporary files
